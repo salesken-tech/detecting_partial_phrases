@@ -1,0 +1,5 @@
+spacy
+flask
+jsonpickle
+PyYAML
+google-cloud-translate
