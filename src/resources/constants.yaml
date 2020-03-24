@@ -1,2 +1,8 @@
+host: 35.200.234.61
+password: cx6ac54nmgGtLD1y
+db_name: analytics
+min_pool: 5
+max_pool: 10
+
 translate_project_id: complex-app-300ee
 translation_depth: 10
