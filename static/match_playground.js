@@ -1,23 +1,13 @@
-//$("#my_form").submit(function(event){
-//    event.preventDefault();
-//    var post_url = $(this).attr("action")
-//    var request_method = $(this).attr("method");
-//    var form_data = $(this).serialize();
-//    $.ajax({
-//        url : post_url,
-//        type : request_method,
-//        data : form_data
-//    }).done(function(response){
-//        $("#server-results").html(response);
-//    });
-//});
+
 
 $(function(){
     $(".error").hide();
     $("#result_table").hide();
+    $("#spinner").hide();
     $("#get_matches").click(function(){
         $('.error').hide();
         $("#result_table").hide();
+        $("#spinner").hide();
         $(".table tbody").empty();
         var signal= $("input#signal").val();
         if (signal == ''){
@@ -41,6 +31,8 @@ $(function(){
 
         var data_string = "signal="+signal+"&snippet="+snippet+'&threshold='+threshold;
 //        alert(data_string);return false;
+        $("#spinner").show();
+        $("#spinner").focus();
         $.ajax({
             type : "POST",
             url : "http://localhost:9999/match_playground",
@@ -48,22 +40,17 @@ $(function(){
             success : function(response,status) {
                 markup="";
                 for (i = 0; i < response.length; i++){
-                markup+="<tr>\n"+
+                    markup+="<tr>\n"+
                         "<td>"+response[i].tag+"</td>\n"+
                         "<td>"+response[i].signal+"</td>\n"+
                         "<td>"+response[i].snippet+"</td>\n"+
                         "<td>"+response[i].score+"</td>\n"+
                         "<td>"+response[i].status+"</td>\n"+
                         "</tr>";
-
                 }
+                $("#spinner").hide();
                 $(".table tbody").append(markup);
-                $("#result_table").show()
-
-
-
-
-
+                $("#result_table").show();
             }
         });
         return false;

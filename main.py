@@ -1,3 +1,5 @@
+import json
+
 from flask import Flask, request, Response, render_template, flash, redirect, send_file
 from src.services import sentence_services, match_result
 from src.utilities import sken_logger, sken_singleton, db
@@ -46,6 +48,19 @@ def return_match_result():
     logger.info("Time for result={}".format(time.time() - s))
     resp = Response(jsonpickle.encode(result),
                     mimetype='application/json')
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
+
+
+@app.route("/rolling_window", methods=["POST", "GET"])
+def rolling_window():
+    signal = request.form.get("signal")
+    snippet = request.form.get("snippet")
+    s = time.time()
+    result = match_result.rolling_window_result(signal, snippet)
+    logger.info("Time for result={}".format(time.time() - s))
+    resp = Response(json.dumps(result, separators=(',', ':')),
+                    mimetype='application/text')
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
 

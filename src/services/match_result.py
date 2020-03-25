@@ -1,8 +1,10 @@
-from src.utilities import constants, sken_logger, sken_singleton
+from src.utilities import sken_logger, sken_singleton
 from src.services import sentence_services
 from concurrent.futures import ThreadPoolExecutor
 import time
 import numpy as np
+from sklearn.metrics.pairwise import cosine_similarity
+import json
 
 logger = sken_logger.get_logger("match_result")
 
@@ -58,3 +60,37 @@ def make_result(signal, snippet, threshold):
             result.append({"tag": paraphrased_signals[i]['signal_tag'], "signal": paraphrased_signals[i]['signal'],
                            "snippet": snippet, "score": str(score[0]), "status": "NO-MATCH"})
     return result
+
+
+def rolling_window_result(signal, snippet):
+    start = time.time()
+    logger.info("Generating sentences for signal={}".format(signal))
+    generated_signals = sentence_services.paraphrase_sentence(signal)
+    logger.info("Extracting sentences out of {} signals".format(len(generated_signals) + 1))
+    with ThreadPoolExecutor(max_workers=len(generated_signals) + 1) as exe:
+        future = exe.map(sentence_services.get_extracted_sentences, list(set(generated_signals + [signal])))
+    extracted_signals = []
+    for item in future:
+        extracted_signals.extend(item['extracted_sentences'])
+    all_signals = list(set(generated_signals + extracted_signals))
+    logger.info("Time for making signals={}".format(time.time() - start))
+    logger.info("Making rolling window snippets")
+    rolling_snippets = sentence_services.make_ngram(snippet)
+    logger.info("Computing similarity")
+    start = time.time()
+    signal_vectors = sken_singleton.Singletons.get_instance().perform_embeddings(all_signals)
+    result = []
+    for item in rolling_snippets:
+        snippets = item["sentences"]
+        snippets_vectors = sken_singleton.Singletons.get_instance().perform_embeddings(snippets)
+        score = cosine_similarity(signal_vectors, snippets_vectors)
+        result.append({"gram": str(item["lenght"]), "signals": json.dumps(all_signals, separators=(',', ':')),
+                       "snippets": json.dumps(snippets, separators=(',', ':')),
+                       "score": json.dumps(score.tolist(), separators=(',', ':'))})
+
+    logger.info("Time for computing all the similarity={}".format(time.time() - start))
+    return result
+
+
+if __name__ == '__main__':
+    print(rolling_window_result("hello", "hi i am good"))

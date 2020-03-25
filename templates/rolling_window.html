@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Match Playgroung</title>
+   <title>Rolling Window</title>
 
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -11,13 +11,22 @@
 
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,500&amp;display=swap" rel="stylesheet">
 
+
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.js"></script>
 
-    <script src="../static/match_playground.js"></script>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+   <script src="http://code.highcharts.com/highcharts.js"></script>
+   <script src="https://code.highcharts.com/modules/heatmap.js"></script>
+   <script src="https://code.highcharts.com/modules/exporting.js"></script>
+   <script src="https://code.highcharts.com/modules/export-data.js"></script>
+   <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+
+    <script src="../static/rolling_window.js"></script>
 
 <style>
 .pace {
@@ -278,6 +287,7 @@ keyframes ripple { 100% {
 </style>
 </head>
 <body>
+
     <div id="spinner" style="width: 100px;height: 100px;position: absolute; margin: auto; top: 0;right: 0;bottom: 0;left: 0;">
          <button class="btn btn-primary" >
               <span class="spinner-border spinner-border-sm"></span>
@@ -286,7 +296,7 @@ keyframes ripple { 100% {
      </div>
 
     <div class="small text-center" style="padding-top:50px">
-        <h1><u>New Match Playground</u></h1>
+        <h1><u>Rolling Window Semantic match</u></h1>
     </div>
 
     <div id='match_form_container'align="left" style="padding-right: 50px;padding-top:50px">
@@ -295,28 +305,12 @@ keyframes ripple { 100% {
         <label class="error" for="signal" id="signal_error">This is required</label>
         <input id="snippet" type="text" name="snippet" size="35" placeholder="snippet" style="margin-right: 5px">
         <label class="error" for="snippet" id="snippet_error">This is required</label>
-        <input id="threshold" type="text" name="threshold" size="5" placeholder="threshold" style="margin-right: 5px ; margin-left: 5px">
-        <label class="error" for="threshold" id="threshold_error">This is required</label>
-        <input type="submit" value="submit"  id="get_matches" />
+        <input type="submit" value="submit"  id="get_result" />
     </form>
     </div>
 
-    <div id="result_table" style="padding-left: 20px;padding-top: 20px" >
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col">Signal_Tag</th>
-              <th scope="col">Signal</th>
-              <th scope="col">Snippet</th>
-              <th scope="col">Score</th>
-              <th scope="col">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-          </tbody>
-        </table>
+    <div id="myheatMap_0" style="width: 600px; height: 500px; margin: 0 auto"></div>
 
-    </div>
 
 
 

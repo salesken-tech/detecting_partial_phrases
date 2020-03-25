@@ -5,6 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 import multiprocessing
 from src.utilities import constants, sken_logger, db
 import spacy
+import textacy
 
 logger = sken_logger.get_logger("sentence_services")
 
@@ -95,5 +96,17 @@ def get_extracted_sentences(sentence):
     return {"orignal_sentence": sentence, "extracted_sentences": np}
 
 
-if __name__ == "__main__":
-    paraphrase_org_signals(1, 150)
+def make_ngram(sentence):
+    if sentence is not None:
+        logger.info("Making a total of {}_gram for sentence={}".format(len(sentence.split()),sentence))
+        doc = textacy.make_spacy_doc(sentence, lang='en_core_web_sm')
+        result = []
+        for i in range(len(sentence.split())):
+            n_gram = textacy.extract.ngrams(doc, n=i + 1, filter_stops=False)
+            result.append({"lenght": str(i + 1), "sentences": [str(item) for item in n_gram]})
+        return result
+    else:
+        logger.info("Please enter proper data")
+
+
+

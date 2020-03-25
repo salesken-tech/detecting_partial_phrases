@@ -1,3 +1,4 @@
+textacy
 numpy
 spacy
 flask
